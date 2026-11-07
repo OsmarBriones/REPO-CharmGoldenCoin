@@ -38,12 +38,18 @@ namespace CharmGoldenCoin
 			{
 				context.Cancel = true;
 				context.InvincibleSecondsAfter = coin.HeadsInvincibleSeconds.Value;
-				coin.LogDebug($"Heads ({chance:0.#}%): hit of {context.Damage} cancelled, health stays {context.Health}/{context.MaxHealth}, coin does not wear");
+				if (coin.DebugMode)
+				{
+					coin.LogDebug($"Heads ({chance:0.#}%): hit of {context.Damage} cancelled, health stays {context.Health}/{context.MaxHealth}, coin does not wear");
+				}
 			}
 			else
 			{
 				coin.Wear(coin.WearPercent);
-				coin.LogDebug($"Tails ({100f - chance:0.#}%): hit of {context.Damage} lands, coin wears {coin.WearPercent:0.#}%");
+				if (coin.DebugMode)
+				{
+					coin.LogDebug($"Tails ({100f - chance:0.#}%): hit of {context.Damage} lands, coin wears {coin.WearPercent:0.#}%");
+				}
 			}
 		}
 	}

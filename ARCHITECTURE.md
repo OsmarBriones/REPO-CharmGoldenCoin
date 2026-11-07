@@ -47,3 +47,12 @@ Provided by CharmCore: the `Debug.DebugMode` setting (off by default) places the
 - Verified only by build and unit tests; not exercised in game.
 
 - Looked up by exact prefab name; a game update that renames the prefab needs a mod update.
+
+## Runtime hygiene
+
+- **References and level state:** nothing needed. The only static fields are the charm and a `System.Random`; neither is a game object and neither depends on the level. No per-level state exists.
+- **Per-frame work:** the hurt handler exits on its first check while the charm is inactive; active, it allocates nothing (the `Random` is reused). There is no `Update`.
+- **Debug logs:** fixed. Both `LogDebug` lines in the hurt handler (heads and tails) are now guarded with `if (coin.DebugMode)`.
+- **Changes to the game:** nothing needed. The mod only sets `Cancel` and `InvincibleSecondsAfter` on the hurt context of the current hit; it writes nothing that persists.
+- **Static game objects and Find calls:** none.
+- Known limit outside this mod: while the charm is active, CharmCore's `IsActive` and `CharmSetting.Value` build their host-setting key strings on each call; that is CharmCore's code and was left alone.
