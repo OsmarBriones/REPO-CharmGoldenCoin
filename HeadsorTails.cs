@@ -1,32 +1,50 @@
-using UnityEngine;
+using System;
+using CharmCore.Api;
+using CharmGoldenCoin.Domain;
 
 namespace CharmGoldenCoin
 {
 	/// <summary>
-	/// Heads or Tails: when you are about to take damage a coin is flipped: heads and you take none, tails and you take it and the coin wears.
-	/// TODO: implement the power. Rules every charm follows:
-	/// - Only act while <c>Charm.IsActive</c> (the valuable is in the local player's pocket and everything is on).
-	/// - Call <c>Charm.TryUse()</c> at the moment the power triggers and apply the effect only when it returns true:
-	///   that starts the cooldown and wears the valuable. For wear over time use <c>Charm.TryUse(percent)</c> or <c>Charm.Wear(percent)</c>.
-	/// - Write debug detail with <c>Charm.LogDebug(...)</c>, never with the plugin logger (a test enforces it).
+	/// Heads or Tails: every hit that is about to damage the local player flips the coin. Heads cancels the hit and the coin
+	/// does not wear; tails lets the hit land and wears the coin. CharmCore owns the single patch on <c>PlayerHealth.Hurt</c>
+	/// and only offers hits the game would really apply, so no flip or wear is wasted.
 	/// </summary>
-	internal sealed class HeadsorTails : MonoBehaviour
+	internal static class HeadsOrTails
 	{
-		internal GoldenCoinCharm Charm { get; set; } = null!;
+		/// <summary>Priority 0 is the "cancelling effects" slot: the flip happens before any damage reduction.</summary>
+		private const int HurtPriority = 0;
 
-		private void Update()
+		private static readonly Random Rng = new Random();
+
+		private static GoldenCoinCharm? charm;
+
+		/// <summary>Registers the hurt handler. Call it once, after <c>CharmsApi.Register</c>.</summary>
+		internal static void Register(GoldenCoinCharm coinCharm)
 		{
-			if (Charm == null || !Charm.IsActive)
+			charm = coinCharm;
+			CharmsApi.OnPlayerHurting(OnPlayerHurting, HurtPriority);
+		}
+
+		private static void OnPlayerHurting(PlayerHurtContext context)
+		{
+			GoldenCoinCharm? coin = charm;
+			if (coin == null || !coin.IsActive)
 			{
 				return;
 			}
 
-			// TODO: detect the moment the power should trigger, then:
-			// if (Charm.TryUse())
-			// {
-			//     ... apply the effect ...
-			//     Charm.LogDebug("Heads or Tails triggered");
-			// }
+			float chance = coin.HeadsChancePercent.Value;
+			if (CoinFlip.Flip(chance, Rng))
+			{
+				context.Cancel = true;
+				context.InvincibleSecondsAfter = coin.HeadsInvincibleSeconds.Value;
+				coin.LogDebug($"Heads ({chance:0.#}%): hit of {context.Damage} cancelled, health stays {context.Health}/{context.MaxHealth}, coin does not wear");
+			}
+			else
+			{
+				coin.Wear(coin.WearPercent);
+				coin.LogDebug($"Tails ({100f - chance:0.#}%): hit of {context.Damage} lands, coin wears {coin.WearPercent:0.#}%");
+			}
 		}
 	}
 }

@@ -23,10 +23,10 @@ namespace CharmGoldenCoin
 			this.gameObject.transform.parent = null;
 			this.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-			// Registering binds Enabled, WearPercent, CooldownSeconds and the Debug section (DebugMode) in this mod's config file.
+			// Registering binds Enabled, WearPercent and the Debug section (DebugMode) in this mod's config file.
 			GoldenCoinCharm charm = new GoldenCoinCharm();
 			CharmsApi.Register(charm, Config);
-			this.gameObject.AddComponent<HeadsorTails>().Charm = charm;
+			HeadsOrTails.Register(charm);
 
 			Logger.LogInfo($"{PluginName} {PluginVersion} loaded!");
 		}

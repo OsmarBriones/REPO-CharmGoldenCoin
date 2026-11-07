@@ -6,5 +6,5 @@ A player stores the Golden Coin in a pocket and gets this power while it stays t
 
 ## Requirements
 - FR-001: Registers a charm with CharmCore for the prefab Valuable Desert Golden Coin.
-- FR-002: Settings through CharmCore: Enabled, WearPercent, CooldownSeconds, DebugMode; host-authoritative except DebugMode.
+- FR-002: Settings through CharmCore: Enabled, WearPercent, HeadsChancePercent, HeadsInvincibleSeconds, DebugMode; host-authoritative except DebugMode.
 - FR-003: All players install it (Category 2); depends on Pockets and CharmCore.

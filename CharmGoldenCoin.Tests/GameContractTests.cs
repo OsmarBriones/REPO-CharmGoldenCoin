@@ -30,9 +30,15 @@ public class GameContractTests
 	[TestMethod]
 	public void Valuable_HasTheValueFields()
 	{
-		// TODO: add one RequireField / RequireMethod line for every game member this charm's effect reads, writes or patches,
-		// so a game update that renames or removes one fails here with a clear message.
 		RequireField("ValuableObject", "dollarValueCurrent");
+	}
+
+	[TestMethod]
+	public void PlayerHealth_HurtIsTheHookCharmCorePatches()
+	{
+		// This mod never patches the method itself: CharmCore does and offers the hit through CharmsApi.OnPlayerHurting.
+		// If the signature changes, the coin flip silently stops, so it is checked here too (damage, savingGrace, enemyIndex, hurtByHeal).
+		RequireMethod("PlayerHealth", "Hurt", 4);
 	}
 
 	// ---- Helpers ----
