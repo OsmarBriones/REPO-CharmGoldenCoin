@@ -34,7 +34,7 @@ Settings are in `com.osmar.CharmGoldenCoin.cfg` inside `BepInEx/config`, section
 - `HeadsChancePercent` (default `50`, 0 to 100): chance that a flip is heads. 0 never saves you, 100 always does.
 - `HeadsInvincibleSeconds` (default `0.5`, 0 to 5): seconds you cannot be hurt after a heads, so a single attack is not flipped again and again. 0 flips every hit.
 
-Section `Debug`: `DebugMode` (default `false`) places a Golden Coin on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing.
+Section `Debug`: `DebugMode` (default `false`) places a Golden Coin on the floor in front of you when a level starts (host or singleplayer) and writes extra log lines. For testing. `SpawnNow` (default `false`, needs `DebugMode`): set it to `true` while a level is running to place one right away; it switches itself back off.
 
 ## Good to know
 - Instant kills that skip the normal damage (a scripted explosion kill, arena kills) are not covered by the coin.
